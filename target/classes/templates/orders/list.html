@@ -8,6 +8,9 @@
     <!-- Bootstrap CSS -->
     <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Custom CSS -->
     <style>
         .navbar-brand {
@@ -191,19 +194,19 @@
                                     <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Date</span>
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-sm btn-outline-primary" title="View">
-                                            <i class="fas fa-eye"></i>
+                                    <div class="btn-group-vertical d-grid gap-1" role="group">
+                                        <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-sm btn-primary" title="View Order Details">
+                                            <i class="fas fa-eye"></i> View
                                         </a>
-                                        <a th:href="@{/orders/{id}/edit(id=${order.id})}" class="btn btn-sm btn-outline-secondary" title="Edit">
-                                            <i class="fas fa-edit"></i>
+                                        <a th:href="@{/orders/{id}/edit(id=${order.id})}" class="btn btn-sm btn-secondary" title="Edit Order">
+                                            <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a th:href="@{/tickets/new(orderId=${order.id})}" class="btn btn-sm btn-outline-info" title="Create Ticket">
-                                            <i class="fas fa-ticket-alt"></i>
+                                        <a th:href="@{/tickets/new(orderId=${order.id})}" class="btn btn-sm btn-info" title="Create Support Ticket">
+                                            <i class="fas fa-ticket-alt"></i> Ticket
                                         </a>
-                                        <form th:action="@{/orders/{id}/delete(id=${order.id})}" method="post" style="display: inline;">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger delete-btn" title="Delete">
-                                                <i class="fas fa-trash"></i>
+                                        <form th:action="@{/orders/{id}/delete(id=${order.id})}" method="post" class="d-grid">
+                                            <button type="submit" class="btn btn-sm btn-danger delete-btn" title="Delete Order">
+                                                <i class="fas fa-trash"></i> Delete
                                             </button>
                                         </form>
                                     </div>

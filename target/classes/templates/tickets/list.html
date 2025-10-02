@@ -8,6 +8,9 @@
     <!-- Bootstrap CSS -->
     <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Custom CSS -->
     <style>
         .navbar-brand {
@@ -235,22 +238,22 @@
                                     <span th:text="${#temporals.format(ticket.createdDate, 'dd/MM/yyyy HH:mm')}">Date</span>
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <a th:href="@{/tickets/{id}(id=${ticket.id})}" class="btn btn-sm btn-outline-primary" title="View">
-                                            <i class="fas fa-eye"></i>
+                                    <div class="btn-group-vertical d-grid gap-1" role="group">
+                                        <a th:href="@{/tickets/{id}(id=${ticket.id})}" class="btn btn-sm btn-primary" title="View Ticket Details">
+                                            <i class="fas fa-eye"></i> View
                                         </a>
-                                        <a th:href="@{/tickets/{id}/edit(id=${ticket.id})}" 
-                                           class="btn btn-sm btn-outline-secondary" 
-                                           title="Edit"
+                                        <a th:href="@{/tickets/{id}/edit(id=${ticket.id})}"
+                                           class="btn btn-sm btn-secondary"
+                                           title="Edit Ticket"
                                            th:classappend="${!ticket.canEdit() ? 'disabled' : ''}">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a th:href="@{/orders/{id}(id=${ticket.order.id})}" class="btn btn-sm btn-outline-info" title="View Order">
-                                            <i class="fas fa-shopping-cart"></i>
+                                        <a th:href="@{/orders/{id}(id=${ticket.order.id})}" class="btn btn-sm btn-info" title="View Related Order">
+                                            <i class="fas fa-shopping-cart"></i> Order
                                         </a>
-                                        <form th:action="@{/tickets/{id}/delete(id=${ticket.id})}" method="post" style="display: inline;">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger delete-btn" title="Delete">
-                                                <i class="fas fa-trash"></i>
+                                        <form th:action="@{/tickets/{id}/delete(id=${ticket.id})}" method="post" class="d-grid">
+                                            <button type="submit" class="btn btn-sm btn-danger delete-btn" title="Delete Ticket">
+                                                <i class="fas fa-trash"></i> Delete
                                             </button>
                                         </form>
                                     </div>
