@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${order.id != null ? 'Edit Order' : 'New Order'} + ' - Food Ordering System'">Order Form</title>
+
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">🍕 Food Ordering System</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/orders}">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/tickets}">Tickets</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${param.error}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <span th:text="${param.error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2" th:text="${order.id != null ? 'Edit Order #' + order.id : 'Create New Order'}">Order Form</h1>
+            <a th:href="@{/orders}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Order Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="${order.id != null ? '/orders/' + order.id : '/orders'}" 
+                              th:object="${order}" method="post">
+                            
+                            <!-- Customer Information -->
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h6 class="text-primary">👤 Customer Information</h6>
+                                    <hr>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="customerName" class="form-label">Customer Name *</label>
+                                    <input type="text" class="form-control" id="customerName" 
+                                           th:field="*{customerName}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('customerName')}" 
+                                         th:errors="*{customerName}">Error</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="customerEmail" class="form-label">Customer Email *</label>
+                                    <input type="email" class="form-control" id="customerEmail" 
+                                           th:field="*{customerEmail}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('customerEmail')}" 
+                                         th:errors="*{customerEmail}">Error</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="customerPhone" class="form-label">Customer Phone *</label>
+                                    <input type="tel" class="form-control" id="customerPhone" 
+                                           th:field="*{customerPhone}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('customerPhone')}" 
+                                         th:errors="*{customerPhone}">Error</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="currency" class="form-label">Currency</label>
+                                    <input type="text" class="form-control" id="currency" 
+                                           th:field="*{currency}" value="LKR" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="deliveryAddress" class="form-label">Delivery Address *</label>
+                                <textarea class="form-control" id="deliveryAddress" rows="3" 
+                                          th:field="*{deliveryAddress}" required></textarea>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('deliveryAddress')}" 
+                                     th:errors="*{deliveryAddress}">Error</div>
+                            </div>
+
+                            <!-- Order Information -->
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h6 class="text-primary">🍕 Order Information</h6>
+                                    <hr>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="foodItems" class="form-label">Food Items *</label>
+                                <textarea class="form-control" id="foodItems" rows="4" 
+                                          th:field="*{foodItems}" required
+                                          placeholder="e.g., 2x Chicken Pizza (Large), 1x Garlic Bread, 2x Coca Cola"></textarea>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('foodItems')}" 
+                                     th:errors="*{foodItems}">Error</div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="totalAmount" class="form-label">Total Amount (LKR) *</label>
+                                    <input type="number" step="0.01" min="0" class="form-control" id="totalAmount" 
+                                           th:field="*{totalAmount}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('totalAmount')}" 
+                                         th:errors="*{totalAmount}">Error</div>
+                                </div>
+                                <div class="col-md-6" th:if="${order.id != null}">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select class="form-select" id="status" th:field="*{status}">
+                                        <option th:each="orderStatus : ${orderStatuses}" 
+                                                th:value="${orderStatus}" 
+                                                th:text="${orderStatus}">Status</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="specialInstructions" class="form-label">Special Instructions</label>
+                                <textarea class="form-control" id="specialInstructions" rows="3" 
+                                          th:field="*{specialInstructions}"
+                                          placeholder="Any special instructions for the order..."></textarea>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> 
+                                        <span th:text="${order.id != null ? 'Update Order' : 'Create Order'}">Save</span>
+                                    </button>
+                                    <a th:href="@{/orders}" class="btn btn-secondary ms-2">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                </div>
+                                <div th:if="${order.id != null}">
+                                    <form th:action="@{/orders/{id}/delete(id=${order.id})}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger delete-btn">
+                                            <i class="fas fa-trash"></i> Delete Order
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Summary Sidebar -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">💡 Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-info-circle text-info"></i>
+                                Fill in all required fields marked with *
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-phone text-success"></i>
+                                Ensure phone number is valid for delivery contact
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-map-marker-alt text-warning"></i>
+                                Provide complete delivery address
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-utensils text-primary"></i>
+                                List all food items with quantities
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-money-bill text-success"></i>
+                                Double-check the total amount
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-3" th:if="${order.id != null}">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">📊 Order Info</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Order ID:</strong> <span th:text="'#' + ${order.id}">ID</span></p>
+                        <p><strong>Created:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Date</span></p>
+                        <p><strong>Status:</strong> 
+                            <span class="badge bg-primary" th:text="${order.status}">Status</span>
+                        </p>
+                        <hr>
+                        <a th:href="@{/tickets/new(orderId=${order.id})}" class="btn btn-info btn-sm w-100">
+                            <i class="fas fa-ticket-alt"></i> Create Support Ticket
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="text-muted">&copy; 2024 Food Ordering System. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="text-muted">Version 1.0.0</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Custom JS -->
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Confirm delete actions
+        $('.delete-btn').on('click', function(e) {
+            if (!confirm('Are you sure you want to delete this item?')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

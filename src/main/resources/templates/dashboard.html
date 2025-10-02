@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Food Ordering System</title>
+
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card-stats {
+            border-left: 4px solid #007bff;
+        }
+        .card-stats.success {
+            border-left-color: #28a745;
+        }
+        .card-stats.warning {
+            border-left-color: #ffc107;
+        }
+        .card-stats.danger {
+            border-left-color: #dc3545;
+        }
+        .card-stats.info {
+            border-left-color: #17a2b8;
+        }
+        .priority-urgent {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .priority-high {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        .priority-medium {
+            color: #ffc107;
+        }
+        .priority-low {
+            color: #6c757d;
+        }
+        .status-open {
+            color: #007bff;
+        }
+        .status-in-progress {
+            color: #ffc107;
+        }
+        .status-resolved {
+            color: #28a745;
+        }
+        .status-closed {
+            color: #6c757d;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">🍕 Food Ordering System</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/orders}">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/tickets}">Tickets</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${param.error}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <span th:text="${param.error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">📊 Dashboard Overview</h1>
+            <div class="text-muted">
+                <small>Last updated: <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span></small>
+            </div>
+        </div>
+
+        <!-- Ticket Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h3 class="h4 mb-3">🎫 Ticket Statistics</h3>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card card-stats">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="card-category text-muted">Total Tickets</p>
+                                <h3 class="card-title" th:text="${totalTickets}">0</h3>
+                            </div>
+                            <div class="text-primary">
+                                <i class="fas fa-ticket-alt fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card card-stats info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="card-category text-muted">Open Tickets</p>
+                                <h3 class="card-title" th:text="${openTickets}">0</h3>
+                            </div>
+                            <div class="text-info">
+                                <i class="fas fa-folder-open fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card card-stats warning">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="card-category text-muted">In Progress</p>
+                                <h3 class="card-title" th:text="${inProgressTickets}">0</h3>
+                            </div>
+                            <div class="text-warning">
+                                <i class="fas fa-cog fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card card-stats success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="card-category text-muted">Resolved</p>
+                                <h3 class="card-title" th:text="${resolvedTickets}">0</h3>
+                            </div>
+                            <div class="text-success">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Priority Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h3 class="h4 mb-3">⚡ Priority Distribution</h3>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card card-stats danger">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="card-category text-muted">Urgent</p>
+                                <h3 class="card-title priority-urgent" th:text="${urgentTickets}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card card-stats warning">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="card-category text-muted">High</p>
+                                <h3 class="card-title priority-high" th:text="${highPriorityTickets}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card card-stats">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="card-category text-muted">Medium</p>
+                                <h3 class="card-title priority-medium" th:text="${mediumPriorityTickets}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card card-stats">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="card-category text-muted">Low</p>
+                                <h3 class="card-title priority-low" th:text="${lowPriorityTickets}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h3 class="h4 mb-3">🍕 Order Statistics</h3>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card card-stats">
+                    <div class="card-body text-center">
+                        <p class="card-category text-muted">Total Orders</p>
+                        <h4 class="card-title" th:text="${totalOrders}">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card card-stats info">
+                    <div class="card-body text-center">
+                        <p class="card-category text-muted">Pending</p>
+                        <h4 class="card-title" th:text="${pendingOrders}">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card card-stats warning">
+                    <div class="card-body text-center">
+                        <p class="card-category text-muted">Preparing</p>
+                        <h4 class="card-title" th:text="${preparingOrders}">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card card-stats">
+                    <div class="card-body text-center">
+                        <p class="card-category text-muted">Out for Delivery</p>
+                        <h4 class="card-title" th:text="${outForDeliveryOrders}">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card card-stats success">
+                    <div class="card-body text-center">
+                        <p class="card-category text-muted">Delivered</p>
+                        <h4 class="card-title" th:text="${deliveredOrders}">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card card-stats danger">
+                    <div class="card-body text-center">
+                        <p class="card-category text-muted">Cancelled</p>
+                        <h4 class="card-title" th:text="${cancelledOrders}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Statistics -->
+        <div class="row">
+            <!-- Tickets by Category -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">📋 Tickets by Category</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${ticketsByCategory != null and !ticketsByCategory.isEmpty()}">
+                            <div th:each="category : ${ticketsByCategory}" class="d-flex justify-content-between align-items-center mb-2">
+                                <span th:text="${category[0]}">Category</span>
+                                <span class="badge bg-primary" th:text="${category[1]}">0</span>
+                            </div>
+                        </div>
+                        <div th:if="${ticketsByCategory == null or ticketsByCategory.isEmpty()}" class="text-muted text-center">
+                            No ticket categories found
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Customers by Tickets -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">👥 Top 5 Customers by Tickets</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${topCustomersByTickets != null and !topCustomersByTickets.isEmpty()}">
+                            <div th:each="customer, iterStat : ${topCustomersByTickets}" 
+                                 th:if="${iterStat.index < 5}"
+                                 class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong th:text="${customer[0]}">Customer Name</strong><br>
+                                    <small class="text-muted" th:text="${customer[1]}">email@example.com</small>
+                                </div>
+                                <span class="badge bg-warning" th:text="${customer[2]} + ' tickets'">0 tickets</span>
+                            </div>
+                        </div>
+                        <div th:if="${topCustomersByTickets == null or topCustomersByTickets.isEmpty()}" class="text-muted text-center">
+                            No customer data found
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">⚡ Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/tickets/new}" class="btn btn-primary btn-block w-100">
+                                    <i class="fas fa-plus"></i> New Ticket
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/orders/new}" class="btn btn-success btn-block w-100">
+                                    <i class="fas fa-plus"></i> New Order
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/tickets(status='OPEN')}" class="btn btn-info btn-block w-100">
+                                    <i class="fas fa-list"></i> View Open Tickets
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/tickets(priority='URGENT')}" class="btn btn-danger btn-block w-100">
+                                    <i class="fas fa-exclamation-triangle"></i> Urgent Tickets
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="text-muted">&copy; 2024 Food Ordering System. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="text-muted">Version 1.0.0</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Custom JS -->
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Confirm delete actions
+        $('.delete-btn').on('click', function(e) {
+            if (!confirm('Are you sure you want to delete this item?')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

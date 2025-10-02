@@ -1,0 +1,17 @@
+com\foodorder\service\TicketService.class
+com\foodorder\controller\OrderController.class
+com\foodorder\entity\Ticket$TicketStatus.class
+com\foodorder\entity\Order.class
+com\foodorder\entity\Ticket.class
+com\foodorder\controller\HomeController.class
+com\foodorder\entity\Ticket$Priority.class
+com\foodorder\service\StatisticsService.class
+com\foodorder\entity\TicketReply.class
+com\foodorder\service\DataInitializationService.class
+com\foodorder\repository\TicketReplyRepository.class
+com\foodorder\repository\OrderRepository.class
+com\foodorder\entity\Order$OrderStatus.class
+com\foodorder\OrderFeedbacksApplication.class
+com\foodorder\service\OrderService.class
+com\foodorder\controller\TicketController.class
+com\foodorder\repository\TicketRepository.class
